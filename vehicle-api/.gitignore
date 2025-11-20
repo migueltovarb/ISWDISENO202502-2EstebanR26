@@ -1,0 +1,73 @@
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+### Spring Boot ###
+.springBeans
+spring-boot-starter-*/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### Eclipse ###
+.classpath
+.project
+.settings/
+bin/
+
+### VS Code ###
+.vscode/settings-local.json
+*.code-workspace
+
+# Mantener configuraciones del proyecto
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### System Files ###
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+*.swo
+*~
+
+### Application Properties ###
+# Descomentar si quieres ignorar configuraciones locales
+# application-local.properties
+# application-dev.properties
+
+### MongoDB ###
+*.mongodb
+
+### Logs ###
+logs/
+*.log
+*.log.*
+
+### Temporary Files ###
+tmp/
+temp/
+*.tmp
+*.bak

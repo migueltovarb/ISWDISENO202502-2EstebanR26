@@ -1,0 +1,267 @@
+### Vehicle API - Ejemplos de Peticiones HTTP
+### Puedes usar esto con Thunder Client (VS Code) o REST Client extension
+
+@baseUrl = http://localhost:8080/api/vehicles
+
+###############################################
+# CREATE - Crear nuevos vehículos
+###############################################
+
+### 1. Crear vehículo Toyota
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "marca": "Toyota",
+  "modelo": "Corolla",
+  "anio": 2023,
+  "color": "Blanco",
+  "placa": "ABC123",
+  "precio": 25000.00,
+  "tipo": "Sedan",
+  "disponible": true
+}
+
+### 2. Crear vehículo Honda
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "marca": "Honda",
+  "modelo": "Civic",
+  "anio": 2024,
+  "color": "Azul",
+  "placa": "XYZ789",
+  "precio": 28000.00,
+  "tipo": "Sedan",
+  "disponible": true
+}
+
+### 3. Crear vehículo Ford
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "marca": "Ford",
+  "modelo": "Explorer",
+  "anio": 2023,
+  "color": "Negro",
+  "placa": "DEF456",
+  "precio": 45000.00,
+  "tipo": "SUV",
+  "disponible": true
+}
+
+### 4. Crear vehículo Chevrolet
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "marca": "Chevrolet",
+  "modelo": "Silverado",
+  "anio": 2024,
+  "color": "Rojo",
+  "placa": "GHI789",
+  "precio": 52000.00,
+  "tipo": "Pickup",
+  "disponible": false
+}
+
+### 5. Crear vehículo Mazda
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "marca": "Mazda",
+  "modelo": "CX-5",
+  "anio": 2023,
+  "color": "Gris",
+  "placa": "JKL012",
+  "precio": 32000.00,
+  "tipo": "SUV",
+  "disponible": true
+}
+
+###############################################
+# READ - Consultar vehículos
+###############################################
+
+### 6. Obtener todos los vehículos
+GET {{baseUrl}}
+
+### 7. Obtener vehículo por ID (reemplazar con ID real)
+GET {{baseUrl}}/6565a1b2c3d4e5f6a7b8c9d0
+
+### 8. Buscar por marca - Toyota
+GET {{baseUrl}}/marca/Toyota
+
+### 9. Buscar por marca - Honda
+GET {{baseUrl}}/marca/Honda
+
+### 10. Buscar por marca y modelo
+GET {{baseUrl}}/marca/Ford/modelo/Explorer
+
+### 11. Buscar por año
+GET {{baseUrl}}/anio/2023
+
+### 12. Buscar por placa
+GET {{baseUrl}}/placa/ABC123
+
+### 13. Obtener vehículos disponibles
+GET {{baseUrl}}/disponibles
+
+### 14. Buscar por tipo - SUV
+GET {{baseUrl}}/tipo/SUV
+
+### 15. Buscar por tipo - Sedan
+GET {{baseUrl}}/tipo/Sedan
+
+### 16. Buscar por rango de precio (20000 - 35000)
+GET {{baseUrl}}/precio?min=20000&max=35000
+
+### 17. Buscar por rango de precio (40000 - 60000)
+GET {{baseUrl}}/precio?min=40000&max=60000
+
+###############################################
+# UPDATE - Actualizar vehículos
+###############################################
+
+### 18. Actualizar vehículo completo (reemplazar ID)
+PUT {{baseUrl}}/6565a1b2c3d4e5f6a7b8c9d0
+Content-Type: application/json
+
+{
+  "marca": "Toyota",
+  "modelo": "Corolla",
+  "anio": 2023,
+  "color": "Plateado",
+  "placa": "ABC123",
+  "precio": 24500.00,
+  "tipo": "Sedan",
+  "disponible": true
+}
+
+### 19. Actualizar disponibilidad a false (reemplazar ID)
+PATCH {{baseUrl}}/6565a1b2c3d4e5f6a7b8c9d0/disponibilidad?disponible=false
+
+### 20. Actualizar disponibilidad a true (reemplazar ID)
+PATCH {{baseUrl}}/6565a1b2c3d4e5f6a7b8c9d0/disponibilidad?disponible=true
+
+###############################################
+# DELETE - Eliminar vehículos
+###############################################
+
+### 21. Eliminar vehículo por ID (reemplazar ID)
+DELETE {{baseUrl}}/6565a1b2c3d4e5f6a7b8c9d0
+
+### 22. Eliminar todos los vehículos (¡CUIDADO!)
+# DELETE {{baseUrl}}
+
+###############################################
+# VALIDACIONES - Probar errores
+###############################################
+
+### 23. Crear vehículo sin marca (Error 400)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "modelo": "Test",
+  "anio": 2023,
+  "color": "Rojo",
+  "placa": "TEST123",
+  "precio": 10000.00
+}
+
+### 24. Crear vehículo con año inválido (Error 400)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "marca": "Test",
+  "modelo": "Test",
+  "anio": 1800,
+  "color": "Rojo",
+  "placa": "TEST123",
+  "precio": 10000.00
+}
+
+### 25. Crear vehículo con precio negativo (Error 400)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "marca": "Test",
+  "modelo": "Test",
+  "anio": 2023,
+  "color": "Rojo",
+  "placa": "TEST123",
+  "precio": -5000.00
+}
+
+### 26. Buscar vehículo con ID inexistente (Error 404)
+GET {{baseUrl}}/999999999999999999999999
+
+###############################################
+# DATOS DE PRUEBA COMPLETOS
+###############################################
+
+### 27. Crear múltiples vehículos para pruebas
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "marca": "Nissan",
+  "modelo": "Sentra",
+  "anio": 2022,
+  "color": "Plata",
+  "placa": "MNO345",
+  "precio": 22000.00,
+  "tipo": "Sedan",
+  "disponible": true
+}
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "marca": "Volkswagen",
+  "modelo": "Tiguan",
+  "anio": 2023,
+  "color": "Blanco",
+  "placa": "PQR678",
+  "precio": 38000.00,
+  "tipo": "SUV",
+  "disponible": true
+}
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "marca": "Hyundai",
+  "modelo": "Tucson",
+  "anio": 2024,
+  "color": "Azul",
+  "placa": "STU901",
+  "precio": 35000.00,
+  "tipo": "SUV",
+  "disponible": false
+}
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "marca": "Kia",
+  "modelo": "Sportage",
+  "anio": 2023,
+  "color": "Negro",
+  "placa": "VWX234",
+  "precio": 33000.00,
+  "tipo": "SUV",
+  "disponible": true
+}

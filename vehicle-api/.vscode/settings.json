@@ -1,0 +1,54 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.compile.nullAnalysis.mode": "automatic",
+  "java.debug.settings.hotCodeReplace": "auto",
+  
+  "files.exclude": {
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true,
+    "**/target": true
+  },
+  
+  "editor.formatOnSave": true,
+  
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+  
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.tabSize": 2
+  },
+  
+  "[xml]": {
+    "editor.tabSize": 2
+  },
+  
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-21",
+      "default": true
+    }
+  ],
+  
+  "spring-boot.ls.checkUpdate": false,
+  "java.server.launchMode": "Standard",
+  
+  "files.associations": {
+    "*.http": "http"
+  },
+  
+  "java.import.gradle.enabled": false,
+  "java.import.maven.enabled": true,
+  
+  "maven.view": "hierarchical",
+  "maven.terminal.useJavaHome": true,
+  
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  }
+}

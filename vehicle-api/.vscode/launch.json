@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Debug Vehicle API",
+      "request": "launch",
+      "mainClass": "com.example.vehicleapi.VehicleApiApplication",
+      "projectName": "vehicle-api",
+      "args": "",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-VehicleApiApplication",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.example.vehicleapi.VehicleApiApplication",
+      "projectName": "vehicle-api",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
