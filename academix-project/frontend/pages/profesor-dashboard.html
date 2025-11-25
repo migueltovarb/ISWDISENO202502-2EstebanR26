@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Profesor - AcademiX</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .navbar {
+            background: #27ae60;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-logout {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-header h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #27ae60;
+            padding-bottom: 10px;
+        }
+
+        .courses-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .course-item {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .course-item:hover {
+            background: #f8f9fa;
+        }
+
+        .course-info h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .course-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn-primary {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #229954;
+        }
+
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #2980b9;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        /* Modal de estudiantes */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            margin: 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #27ae60;
+            padding-bottom: 10px;
+        }
+
+        .modal-header h3 {
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .btn-close {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-close:hover {
+            background: #c0392b;
+        }
+
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .students-table th,
+        .students-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .students-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .students-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .grade-input {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .btn-save-grade {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-save-grade:hover {
+            background: #229954;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>🎓 AcademiX - Panel de Profesor</h1>
+        <div class="navbar-right">
+            <div class="user-info">
+                <span id="userName">Cargando...</span>
+            </div>
+            <button class="btn-logout" onclick="auth.logout()">Cerrar Sesión</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h2>Bienvenido/a Profesor/a</h2>
+            <p>Gestiona tus cursos, estudiantes y calificaciones</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Cursos Asignados</h3>
+                <div class="number" id="totalCursos">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Estudiantes</h3>
+                <div class="number" id="totalEstudiantes">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Calificaciones Pendientes</h3>
+                <div class="number" id="calificacionesPendientes">0</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Mis Cursos</h3>
+            <div id="coursesList" class="courses-list">
+                <div class="empty-state">
+                    <div class="icon">📚</div>
+                    <p>Cargando cursos...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de estudiantes y calificaciones -->
+    <div id="studentsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Estudiantes del Curso</h3>
+                <button class="btn-close" onclick="cerrarModal()">✕ Cerrar</button>
+            </div>
+            <div id="studentsContent">
+                <p>Cargando estudiantes...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        // Verificar autenticación
+        if (!auth.requireRole('PROFESOR')) {
+            // Redirige automáticamente si no es profesor
+        }
+
+        // Cargar datos del usuario
+        const usuario = auth.getUser();
+        document.getElementById('userName').textContent = usuario.nombre;
+
+        let cursosGlobales = [];
+
+        // Cargar cursos del profesor
+        async function cargarCursos() {
+            try {
+                const profesorId = auth.getUserId();
+                const cursos = await api.getCursos();
+                
+                // Filtrar solo los cursos del profesor actual
+                const misCursos = cursos.filter(c => c.profesorId === profesorId);
+                cursosGlobales = misCursos;
+                
+                document.getElementById('totalCursos').textContent = misCursos.length;
+
+                const coursesList = document.getElementById('coursesList');
+                
+                if (misCursos.length === 0) {
+                    coursesList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📚</div>
+                            <p>No tienes cursos asignados</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Calcular estadísticas de estudiantes
+                let totalEstudiantes = 0;
+                let calificacionesPendientes = 0;
+
+                for (const curso of misCursos) {
+                    try {
+                        const inscripciones = await api.fetch(`/inscripciones/curso/${curso.id}`);
+                        const inscripcionesActivas = inscripciones.filter(i => i.estado === 'ACTIVA');
+                        totalEstudiantes += inscripcionesActivas.length;
+
+                        // Contar calificaciones pendientes
+                        for (const inscripcion of inscripcionesActivas) {
+                            try {
+                                const calificaciones = await api.getCalificacionesEstudiante(inscripcion.estudianteId);
+                                const calificacionCurso = calificaciones.find(c => c.cursoId === curso.id);
+                                if (!calificacionCurso || !calificacionCurso.notaFinal) {
+                                    calificacionesPendientes++;
+                                }
+                            } catch (error) {
+                                calificacionesPendientes++;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error obteniendo inscripciones:', error);
+                    }
+                }
+
+                document.getElementById('totalEstudiantes').textContent = totalEstudiantes;
+                document.getElementById('calificacionesPendientes').textContent = calificacionesPendientes;
+
+                coursesList.innerHTML = misCursos.map(curso => `
+                    <div class="course-item">
+                        <div class="course-info">
+                            <h4>${curso.nombre}</h4>
+                            <p>${curso.codigo} - ${curso.creditos} créditos</p>
+                        </div>
+                        <div class="course-actions">
+                            <button class="btn btn-secondary" onclick="verEstudiantes('${curso.id}', '${curso.nombre}')">
+                                👥 Ver Estudiantes
+                            </button>
+                            <button class="btn btn-primary" onclick="gestionarCalificaciones('${curso.id}', '${curso.nombre}')">
+                                📊 Calificaciones
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error cargando cursos:', error);
+                document.getElementById('coursesList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">❌</div>
+                        <p>Error al cargar los cursos</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function verEstudiantes(cursoId, cursoNombre) {
+            const modal = document.getElementById('studentsModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const studentsContent = document.getElementById('studentsContent');
+
+            modalTitle.textContent = `Estudiantes de: ${cursoNombre}`;
+            studentsContent.innerHTML = '<p>Cargando estudiantes...</p>';
+            modal.style.display = 'flex';
+
+            try {
+                const inscripciones = await api.fetch(`/inscripciones/curso/${cursoId}`);
+                const inscripcionesActivas = inscripciones.filter(i => i.estado === 'ACTIVA');
+
+                if (inscripcionesActivas.length === 0) {
+                    studentsContent.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">👥</div>
+                            <p>No hay estudiantes inscritos en este curso</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Obtener información de cada estudiante
+                const estudiantes = await Promise.all(
+                    inscripcionesActivas.map(async (inscripcion) => {
+                        try {
+                            const estudiante = await api.fetch(`/usuarios/${inscripcion.estudianteId}`);
+                            return {
+                                ...estudiante,
+                                inscripcionId: inscripcion.id,
+                                fechaInscripcion: inscripcion.fechaInscripcion
+                            };
+                        } catch (error) {
+                            return null;
+                        }
+                    })
+                );
+
+                const estudiantesValidos = estudiantes.filter(e => e !== null);
+
+                studentsContent.innerHTML = `
+                    <table class="students-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Fecha Inscripción</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${estudiantesValidos.map(estudiante => `
+                                <tr>
+                                    <td>${estudiante.nombre}</td>
+                                    <td>${estudiante.email}</td>
+                                    <td>${new Date(estudiante.fechaInscripcion).toLocaleDateString()}</td>
+                                    <td><span class="badge badge-success">Activo</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+            } catch (error) {
+                console.error('Error cargando estudiantes:', error);
+                studentsContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">❌</div>
+                        <p>Error al cargar estudiantes</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function gestionarCalificaciones(cursoId, cursoNombre) {
+            const modal = document.getElementById('studentsModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const studentsContent = document.getElementById('studentsContent');
+
+            modalTitle.textContent = `Calificaciones de: ${cursoNombre}`;
+            studentsContent.innerHTML = '<p>Cargando calificaciones...</p>';
+            modal.style.display = 'flex';
+
+            try {
+                const inscripciones = await api.fetch(`/inscripciones/curso/${cursoId}`);
+                const inscripcionesActivas = inscripciones.filter(i => i.estado === 'ACTIVA');
+
+                if (inscripcionesActivas.length === 0) {
+                    studentsContent.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">👥</div>
+                            <p>No hay estudiantes inscritos en este curso</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Obtener información de cada estudiante y sus calificaciones
+                const estudiantesConCalificaciones = await Promise.all(
+                    inscripcionesActivas.map(async (inscripcion) => {
+                        try {
+                            const estudiante = await api.fetch(`/usuarios/${inscripcion.estudianteId}`);
+                            const calificaciones = await api.getCalificacionesEstudiante(inscripcion.estudianteId);
+                            const calificacionCurso = calificaciones.find(c => c.cursoId === cursoId);
+                            
+                            return {
+                                ...estudiante,
+                                inscripcionId: inscripcion.id,
+                                calificacion: calificacionCurso,
+                                estudianteId: inscripcion.estudianteId
+                            };
+                        } catch (error) {
+                            return null;
+                        }
+                    })
+                );
+
+                const estudiantesValidos = estudiantesConCalificaciones.filter(e => e !== null);
+
+                studentsContent.innerHTML = `
+                    <table class="students-table">
+                        <thead>
+                            <tr>
+                                <th>Estudiante</th>
+                                <th>Parcial 1</th>
+                                <th>Parcial 2</th>
+                                <th>Examen Final</th>
+                                <th>Nota Final</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${estudiantesValidos.map(estudiante => {
+                                const cal = estudiante.calificacion;
+                                return `
+                                    <tr>
+                                        <td>${estudiante.nombre}</td>
+                                        <td>
+                                            <input type="number" 
+                                                   class="grade-input" 
+                                                   id="parcial1_${estudiante.estudianteId}"
+                                                   value="${cal?.parcial1 || ''}" 
+                                                   min="0" max="5" step="0.1"
+                                                   placeholder="0.0">
+                                        </td>
+                                        <td>
+                                            <input type="number" 
+                                                   class="grade-input" 
+                                                   id="parcial2_${estudiante.estudianteId}"
+                                                   value="${cal?.parcial2 || ''}" 
+                                                   min="0" max="5" step="0.1"
+                                                   placeholder="0.0">
+                                        </td>
+                                        <td>
+                                            <input type="number" 
+                                                   class="grade-input" 
+                                                   id="examenFinal_${estudiante.estudianteId}"
+                                                   value="${cal?.examenFinal || ''}" 
+                                                   min="0" max="5" step="0.1"
+                                                   placeholder="0.0">
+                                        </td>
+                                        <td>
+                                            <strong id="notaFinal_${estudiante.estudianteId}">
+                                                ${cal?.notaFinal || '-'}
+                                            </strong>
+                                        </td>
+                                        <td>
+                                            <button class="btn-save-grade" 
+                                                    onclick="guardarCalificacion('${cursoId}', '${estudiante.estudianteId}', '${estudiante.inscripcionId}', ${cal ? `'${cal.id}'` : 'null'})">
+                                                💾 Guardar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+            } catch (error) {
+                console.error('Error cargando calificaciones:', error);
+                studentsContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">❌</div>
+                        <p>Error al cargar calificaciones</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function guardarCalificacion(cursoId, estudianteId, inscripcionId, calificacionId) {
+            try {
+                const parcial1 = parseFloat(document.getElementById(`parcial1_${estudianteId}`).value) || 0;
+                const parcial2 = parseFloat(document.getElementById(`parcial2_${estudianteId}`).value) || 0;
+                const examenFinal = parseFloat(document.getElementById(`examenFinal_${estudianteId}`).value) || 0;
+                
+                // Calcular nota final (promedio simple)
+                const notaFinal = ((parcial1 + parcial2 + examenFinal) / 3).toFixed(2);
+
+                const calificacion = {
+                    cursoId: cursoId,
+                    estudianteId: estudianteId,
+                    inscripcionId: inscripcionId,
+                    parcial1: parcial1,
+                    parcial2: parcial2,
+                    examenFinal: examenFinal,
+                    notaFinal: parseFloat(notaFinal)
+                };
+
+                if (calificacionId && calificacionId !== 'null') {
+                    // Actualizar calificación existente
+                    await api.actualizarCalificacion(calificacionId, calificacion);
+                } else {
+                    // Crear nueva calificación
+                    await api.crearCalificacion(calificacion);
+                }
+
+                // Actualizar la nota final en la UI
+                document.getElementById(`notaFinal_${estudianteId}`).textContent = notaFinal;
+                
+                alert('✓ Calificación guardada exitosamente');
+                
+                // Recargar cursos para actualizar estadísticas
+                cargarCursos();
+
+            } catch (error) {
+                console.error('Error guardando calificación:', error);
+                alert('✗ Error al guardar la calificación');
+            }
+        }
+
+        function cerrarModal() {
+            document.getElementById('studentsModal').style.display = 'none';
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('studentsModal').addEventListener('click', (e) => {
+            if (e.target.id === 'studentsModal') {
+                cerrarModal();
+            }
+        });
+
+        cargarCursos();
+    </script>
+</body>
+</html>

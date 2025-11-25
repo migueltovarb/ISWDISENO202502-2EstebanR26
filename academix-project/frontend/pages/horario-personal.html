@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Horario - AcademiX</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .navbar {
+            background: #27ae60;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .btn-back {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            background: #2980b9;
+        }
+
+        .btn-logout {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            background: #a93226;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .page-header h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .schedule-grid {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .schedule-table th {
+            background: #27ae60;
+            color: white;
+            font-weight: 600;
+        }
+
+        .schedule-table th:first-child {
+            background: #229954;
+        }
+
+        .schedule-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 5px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .schedule-item strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .schedule-item small {
+            display: block;
+            opacity: 0.9;
+            font-size: 12px;
+        }
+
+        .legend {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .legend h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+        }
+
+        .legend-color.teoria {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .legend-color.practica {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .legend-color.laboratorio {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            color: #27ae60;
+            font-size: 32px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>📅 Mi Horario Personal</h1>
+        <div class="navbar-right">
+            <a href="estudiante-dashboard.html" class="btn-back">← Volver al Panel</a>
+            <button class="btn-logout" onclick="auth.logout()">Cerrar Sesión</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Tu Horario Semanal</h2>
+            <p>Basado en los cursos en los que estás inscrito</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Cursos Activos</h3>
+                <div class="number" id="totalCursos">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Horas Semanales</h3>
+                <div class="number" id="horasSemanales">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Días con Clases</h3>
+                <div class="number" id="diasClases">0</div>
+            </div>
+        </div>
+
+        <div class="schedule-grid">
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Lunes</th>
+                        <th>Martes</th>
+                        <th>Miércoles</th>
+                        <th>Jueves</th>
+                        <th>Viernes</th>
+                        <th>Sábado</th>
+                    </tr>
+                </thead>
+                <tbody id="scheduleBody">
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="icon">📚</div>
+                                <p>Cargando tu horario...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="legend">
+            <h3>Leyenda</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color teoria"></div>
+                    <span>Teoría</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color practica"></div>
+                    <span>Práctica</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color laboratorio"></div>
+                    <span>Laboratorio</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        requireAuth();
+
+        let misHorarios = [];
+        let misCursos = [];
+
+        async function cargarDatos() {
+            try {
+                const estudianteId = auth.getUserId();
+                
+                const inscripciones = await api.getMisInscripciones(estudianteId);
+                const inscripcionesActivas = inscripciones.filter(i => 
+                    i.estado === 'ACTIVA' || i.estado === 'CONFIRMADA'
+                );
+                
+                if (inscripcionesActivas.length === 0) {
+                    mostrarMensajeVacio();
+                    return;
+                }
+                
+                const cursosIds = inscripcionesActivas.map(i => i.cursoId);
+                
+                const todosCursos = await api.getCursos();
+                misCursos = todosCursos.filter(c => cursosIds.includes(c.id));
+                
+                const todosHorarios = await api.fetch('/horarios');
+                
+                misHorarios = todosHorarios.filter(h => cursosIds.includes(h.cursoId));
+                
+                if (misHorarios.length === 0) {
+                    mostrarMensajeVacio('Aún no se han asignado horarios a tus cursos');
+                    return;
+                }
+                
+                renderizarHorario();
+                calcularEstadisticas();
+                
+            } catch (error) {
+                console.error('Error cargando datos:', error);
+                mostrarMensajeVacio('Error al cargar tu horario');
+            }
+        }
+
+        function renderizarHorario() {
+            const horas = generarHoras();
+            const dias = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
+            
+            const tbody = document.getElementById('scheduleBody');
+            tbody.innerHTML = horas.map(hora => {
+                return `
+                    <tr>
+                        <td style="background: #f8f9fa; font-weight: bold;">${hora}</td>
+                        ${dias.map((dia, index) => {
+                            const horariosDelDia = misHorarios.filter(h => 
+                                h.diaSemana === dia && 
+                                h.horaInicio <= hora && 
+                                h.horaFin > hora
+                            );
+                            
+                            return `<td>${horariosDelDia.map(h => {
+                                const curso = misCursos.find(c => c.id === h.cursoId);
+                                const gradiente = getGradiente(h.tipo);
+                                
+                                return `
+                                    <div class="schedule-item" style="background: ${gradiente};">
+                                        <strong>${curso ? curso.codigo : 'N/A'}</strong>
+                                        <small>${curso ? curso.nombre : 'Curso'}</small>
+                                        <small>${h.horaInicio} - ${h.horaFin}</small>
+                                        <small>📍 ${h.salon}</small>
+                                        <small>${h.tipo}</small>
+                                    </div>
+                                `;
+                            }).join('')}</td>`;
+                        }).join('')}
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getGradiente(tipo) {
+            switch(tipo) {
+                case 'TEORIA':
+                    return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                case 'PRACTICA':
+                    return 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+                case 'LABORATORIO':
+                    return 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+                default:
+                    return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+        }
+
+        function generarHoras() {
+            const horas = [];
+            for (let i = 6; i <= 21; i++) {
+                horas.push(`${i.toString().padStart(2, '0')}:00`);
+            }
+            return horas;
+        }
+
+        function calcularEstadisticas() {
+            document.getElementById('totalCursos').textContent = misCursos.length;
+            
+            const horasTotales = misHorarios.reduce((total, h) => {
+                const inicio = parseInt(h.horaInicio.split(':')[0]);
+                const fin = parseInt(h.horaFin.split(':')[0]);
+                return total + (fin - inicio);
+            }, 0);
+            document.getElementById('horasSemanales').textContent = horasTotales;
+            
+            const diasUnicos = new Set(misHorarios.map(h => h.diaSemana));
+            document.getElementById('diasClases').textContent = diasUnicos.size;
+        }
+
+        function mostrarMensajeVacio(mensaje = 'No tienes cursos inscritos') {
+            const tbody = document.getElementById('scheduleBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <div class="icon">📅</div>
+                            <p>${mensaje}</p>
+                            <p><a href="catalogo-cursos.html">Ver catálogo de cursos</a></p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        cargarDatos();
+    </script>
+</body>
+</html>

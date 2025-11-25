@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión - AcademiX</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .btn-login:hover {
+            background: #5568d3;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 15px 0;
+            color: #999;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .register-link p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .btn-register {
+            display: inline-block;
+            padding: 10px 30px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-register:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>🎓 AcademiX</h1>
+            <p>Sistema de Gestión Universitaria</p>
+        </div>
+
+        <h2>Iniciar Sesión</h2>
+
+        <div id="errorMessage" class="error-message"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="tu@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" required placeholder="Tu contraseña">
+            </div>
+
+            <button type="submit" class="btn-login">Iniciar Sesión</button>
+        </form>
+
+        <div class="links">
+            <a href="olvide-password.html">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <div class="register-link">
+            <p>¿No tienes una cuenta?</p>
+            <a href="registro.html" class="btn-register">Registrarse</a>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        // Redirigir si ya está autenticado
+        if (auth.isAuthenticated()) {
+            const rol = auth.getRol();
+            switch(rol) {
+                case 'ADMIN':
+                    window.location.href = 'admin-dashboard.html';
+                    break;
+                case 'PROFESOR':
+                    window.location.href = 'profesor-dashboard.html';
+                    break;
+                case 'ESTUDIANTE':
+                    window.location.href = 'estudiante-dashboard.html';
+                    break;
+                default:
+                    window.location.href = '../index.html';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            try {
+                const response = await api.login(email, password);
+
+                if (response && response.id) {
+                    // Guardar datos en localStorage
+                    localStorage.setItem('userId', response.id);
+                    localStorage.setItem('userName', response.nombre);
+                    localStorage.setItem('userEmail', response.email);
+                    localStorage.setItem('userRol', response.rol);
+
+                    // Redirigir según el rol
+                    switch(response.rol) {
+                        case 'ADMIN':
+                            window.location.href = 'admin-dashboard.html';
+                            break;
+                        case 'PROFESOR':
+                            window.location.href = 'profesor-dashboard.html';
+                            break;
+                        case 'ESTUDIANTE':
+                            window.location.href = 'estudiante-dashboard.html';
+                            break;
+                        default:
+                            window.location.href = '../index.html';
+                    }
+                } else {
+                    throw new Error('Respuesta inválida del servidor');
+                }
+            } catch (error) {
+                console.error('Error en login:', error);
+                errorMessage.textContent = 'Email o contraseña incorrectos';
+                errorMessage.style.display = 'block';
+
+                // Ocultar el mensaje después de 5 segundos
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

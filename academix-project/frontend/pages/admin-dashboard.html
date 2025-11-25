@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - AcademiX</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .navbar {
+            background: #e74c3c;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .btn-logout {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            background: #a93226;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            border: none;
+            background: #ecf0f1;
+            color: #2c3e50;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .tab-button:hover {
+            background: #bdc3c7;
+        }
+
+        .tab-button.active {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+
+        .section-header h3 {
+            color: #2c3e50;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #c0392b;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+
+        .modal-header h3 {
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>👑 AcademiX - Panel de Administración</h1>
+        <div class="navbar-right">
+            <span id="userName">Admin</span>
+            <button class="btn-logout" onclick="auth.logout()">Cerrar Sesión</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Tabs de navegación -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="cambiarTab('dashboard')">📊 Dashboard</button>
+            <button class="tab-button" onclick="cambiarTab('cursos')">📚 Cursos</button>
+            <button class="tab-button" onclick="cambiarTab('usuarios')">👥 Usuarios</button>
+            <button class="tab-button" onclick="cambiarTab('inscripciones')">📝 Inscripciones</button>
+        </div>
+
+        <!-- Tab: Dashboard -->
+        <div id="tab-dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Cursos</h3>
+                    <div class="number" id="statCursos">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Usuarios</h3>
+                    <div class="number" id="statUsuarios">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Inscripciones</h3>
+                    <div class="number" id="statInscripciones">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Ingresos Totales</h3>
+                    <div class="number" id="statIngresos">$0</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Resumen General</h3>
+                <p>Bienvenido al panel de administración de AcademiX. Desde aquí puedes gestionar cursos, usuarios e inscripciones.</p>
+            </div>
+        </div>
+
+        <!-- Tab: Cursos -->
+        <div id="tab-cursos" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h3>Gestión de Cursos</h3>
+                    <button class="btn btn-primary" onclick="abrirModalCurso()">➕ Nuevo Curso</button>
+                </div>
+                <div id="cursosList">
+                    <div class="empty-state">
+                        <div class="icon">📚</div>
+                        <p>Cargando cursos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Usuarios -->
+        <div id="tab-usuarios" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h3>Gestión de Usuarios</h3>
+                    <button class="btn btn-primary" onclick="abrirModalUsuario()">➕ Nuevo Usuario</button>
+                </div>
+                <div id="usuariosList">
+                    <div class="empty-state">
+                        <div class="icon">👥</div>
+                        <p>Cargando usuarios...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Inscripciones -->
+        <div id="tab-inscripciones" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h3>Gestión de Inscripciones</h3>
+                </div>
+                <div id="inscripcionesList">
+                    <div class="empty-state">
+                        <div class="icon">📝</div>
+                        <p>Cargando inscripciones...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Curso -->
+    <div id="modalCurso" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalCursoTitle">Nuevo Curso</h3>
+                <button class="btn btn-secondary" onclick="cerrarModalCurso()">✕</button>
+            </div>
+            <form id="formCurso">
+                <input type="hidden" id="cursoId">
+                <div class="form-group">
+                    <label>Código *</label>
+                    <input type="text" id="cursoCodigo" required placeholder="Ej: MAT101">
+                </div>
+                <div class="form-group">
+                    <label>Nombre *</label>
+                    <input type="text" id="cursoNombre" required placeholder="Ej: Cálculo Diferencial">
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="cursoDescripcion" placeholder="Descripción del curso"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Créditos *</label>
+                    <input type="number" id="cursoCreditos" required min="1" max="10" value="3">
+                </div>
+                <div class="form-group">
+                    <label>Nivel</label>
+                    <input type="text" id="cursoNivel" placeholder="Ej: 1, 2, 3...">
+                </div>
+                <div class="form-group">
+                    <label>Carrera</label>
+                    <input type="text" id="cursoCarrera" placeholder="Ej: Ingeniería de Sistemas">
+                </div>
+                <div class="form-group">
+                    <label>Precio *</label>
+                    <input type="number" id="cursoPrecio" required min="0" step="0.01" value="550">
+                </div>
+                <div class="form-group">
+                    <label>Cupo Máximo *</label>
+                    <input type="number" id="cursoCupoMaximo" required min="1" value="30">
+                </div>
+                <div class="form-group">
+                    <label>Profesor *</label>
+                    <select id="cursoProfesorId" required>
+                        <option value="">Selecciona un profesor...</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalCurso()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Curso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Usuario -->
+    <div id="modalUsuario" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalUsuarioTitle">Nuevo Usuario</h3>
+                <button class="btn btn-secondary" onclick="cerrarModalUsuario()">✕</button>
+            </div>
+            <form id="formUsuario">
+                <input type="hidden" id="usuarioId">
+                <div class="form-group">
+                    <label>Nombre Completo *</label>
+                    <input type="text" id="usuarioNombre" required placeholder="Ej: Juan Pérez">
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="usuarioEmail" required placeholder="ejemplo@correo.com">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña *</label>
+                    <input type="password" id="usuarioPassword" required placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="form-group">
+                    <label>Rol *</label>
+                    <select id="usuarioRol" required>
+                        <option value="">Selecciona un rol...</option>
+                        <option value="ESTUDIANTE">Estudiante</option>
+                        <option value="PROFESOR">Profesor</option>
+                        <option value="ADMIN">Administrador</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalUsuario()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        // Verificar autenticación
+        if (!auth.requireRole('ADMIN')) {
+            // Redirige automáticamente si no es admin
+        }
+
+        const usuario = auth.getUser();
+        document.getElementById('userName').textContent = usuario.nombre;
+
+        let profesoresGlobales = [];
+        let cursosGlobales = [];
+
+        // Cambiar de tab
+        function cambiarTab(tabName) {
+            // Ocultar todos los tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostrar tab seleccionado
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Cargar datos según el tab
+            switch(tabName) {
+                case 'dashboard':
+                    cargarDashboard();
+                    break;
+                case 'cursos':
+                    cargarCursos();
+                    break;
+                case 'usuarios':
+                    cargarUsuarios();
+                    break;
+                case 'inscripciones':
+                    cargarInscripciones();
+                    break;
+            }
+        }
+
+        // ========== DASHBOARD ==========
+        async function cargarDashboard() {
+            try {
+                const [cursos, usuarios, inscripciones, pagos] = await Promise.all([
+                    api.getCursos(),
+                    api.fetch('/usuarios'),
+                    api.fetch('/inscripciones'),
+                    api.fetch('/pagos')
+                ]);
+
+                document.getElementById('statCursos').textContent = cursos.length;
+                document.getElementById('statUsuarios').textContent = usuarios.length;
+                document.getElementById('statInscripciones').textContent = inscripciones.length;
+
+                const ingresoTotal = pagos
+                    .filter(p => p.estadoPago === 'COMPLETADO')
+                    .reduce((sum, p) => sum + parseFloat(p.monto || 0), 0);
+                
+                document.getElementById('statIngresos').textContent = '$' + ingresoTotal.toFixed(2);
+            } catch (error) {
+                console.error('Error cargando dashboard:', error);
+            }
+        }
+
+        // ========== CURSOS ==========
+        async function cargarCursos() {
+            try {
+                const cursos = await api.getCursos();
+                cursosGlobales = cursos;
+                
+                const cursosList = document.getElementById('cursosList');
+
+                if (cursos.length === 0) {
+                    cursosList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📚</div>
+                            <p>No hay cursos registrados</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Obtener profesores para mostrar nombres
+                const profesores = await api.fetch('/usuarios').then(users => 
+                    users.filter(u => u.rol === 'PROFESOR')
+                );
+
+                cursosList.innerHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Créditos</th>
+                                <th>Precio</th>
+                                <th>Profesor</th>
+                                <th>Cupos</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${cursos.map(curso => {
+                                const profesor = profesores.find(p => p.id === curso.profesorId);
+                                return `
+                                    <tr>
+                                        <td><strong>${curso.codigo}</strong></td>
+                                        <td>${curso.nombre}</td>
+                                        <td>${curso.creditos}</td>
+                                        <td>$${parseFloat(curso.precio).toFixed(2)}</td>
+                                        <td>${profesor ? profesor.nombre : 'Sin asignar'}</td>
+                                        <td>${curso.cupoDisponible || curso.cupoMaximo}/${curso.cupoMaximo}</td>
+                                        <td>
+                                            ${curso.activo 
+                                                ? '<span class="badge badge-success">Activo</span>'
+                                                : '<span class="badge badge-danger">Inactivo</span>'
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-warning" onclick="editarCurso('${curso.id}')">✏️</button>
+                                                <button class="btn btn-danger" onclick="eliminarCurso('${curso.id}')">🗑️</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error cargando cursos:', error);
+            }
+        }
+
+        async function abrirModalCurso(cursoId = null) {
+            const modal = document.getElementById('modalCurso');
+            const form = document.getElementById('formCurso');
+            
+            // Cargar profesores
+            if (profesoresGlobales.length === 0) {
+                const usuarios = await api.fetch('/usuarios');
+                profesoresGlobales = usuarios.filter(u => u.rol === 'PROFESOR');
+            }
+
+            const selectProfesor = document.getElementById('cursoProfesorId');
+            selectProfesor.innerHTML = '<option value="">Selecciona un profesor...</option>' +
+                profesoresGlobales.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+
+            if (cursoId) {
+                // Editar curso
+                const curso = cursosGlobales.find(c => c.id === cursoId);
+                document.getElementById('modalCursoTitle').textContent = 'Editar Curso';
+                document.getElementById('cursoId').value = curso.id;
+                document.getElementById('cursoCodigo').value = curso.codigo;
+                document.getElementById('cursoNombre').value = curso.nombre;
+                document.getElementById('cursoDescripcion').value = curso.descripcion || '';
+                document.getElementById('cursoCreditos').value = curso.creditos;
+                document.getElementById('cursoNivel').value = curso.nivel || '';
+                document.getElementById('cursoCarrera').value = curso.carrera || '';
+                document.getElementById('cursoPrecio').value = curso.precio;
+                document.getElementById('cursoCupoMaximo').value = curso.cupoMaximo;
+                document.getElementById('cursoProfesorId').value = curso.profesorId || '';
+            } else {
+                // Nuevo curso
+                document.getElementById('modalCursoTitle').textContent = 'Nuevo Curso';
+                form.reset();
+                document.getElementById('cursoId').value = '';
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function cerrarModalCurso() {
+            document.getElementById('modalCurso').style.display = 'none';
+            document.getElementById('formCurso').reset();
+        }
+
+        document.getElementById('formCurso').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const cursoId = document.getElementById('cursoId').value;
+            const curso = {
+                codigo: document.getElementById('cursoCodigo').value,
+                nombre: document.getElementById('cursoNombre').value,
+                descripcion: document.getElementById('cursoDescripcion').value,
+                creditos: parseInt(document.getElementById('cursoCreditos').value),
+                nivel: document.getElementById('cursoNivel').value,
+                carrera: document.getElementById('cursoCarrera').value,
+                precio: parseFloat(document.getElementById('cursoPrecio').value),
+                cupoMaximo: parseInt(document.getElementById('cursoCupoMaximo').value),
+                cupoDisponible: parseInt(document.getElementById('cursoCupoMaximo').value),
+                profesorId: document.getElementById('cursoProfesorId').value,
+                activo: true
+            };
+
+            try {
+                if (cursoId) {
+                    // Actualizar
+                    await api.fetch(`/cursos/${cursoId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(curso)
+                    });
+                    alert('✓ Curso actualizado exitosamente');
+                } else {
+                    // Crear
+                    await api.crearCurso(curso);
+                    alert('✓ Curso creado exitosamente');
+                }
+                cerrarModalCurso();
+                cargarCursos();
+            } catch (error) {
+                console.error('Error guardando curso:', error);
+                alert('✗ Error al guardar el curso');
+            }
+        });
+
+        function editarCurso(cursoId) {
+            abrirModalCurso(cursoId);
+        }
+
+        async function eliminarCurso(cursoId) {
+            const curso = cursosGlobales.find(c => c.id === cursoId);
+            if (!confirm(`¿Estás seguro de eliminar el curso "${curso.nombre}"?`)) return;
+
+            try {
+                await api.fetch(`/cursos/${cursoId}`, { method: 'DELETE' });
+                alert('✓ Curso eliminado exitosamente');
+                cargarCursos();
+            } catch (error) {
+                console.error('Error eliminando curso:', error);
+                alert('✗ Error al eliminar el curso');
+            }
+        }
+
+        // ========== USUARIOS ==========
+        async function cargarUsuarios() {
+            try {
+                const usuarios = await api.fetch('/usuarios');
+                const usuariosList = document.getElementById('usuariosList');
+
+                if (usuarios.length === 0) {
+                    usuariosList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">👥</div>
+                            <p>No hay usuarios registrados</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                usuariosList.innerHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${usuarios.map(usuario => `
+                                <tr>
+                                    <td><strong>${usuario.nombre}</strong></td>
+                                    <td>${usuario.email}</td>
+                                    <td>
+                                        <span class="badge ${
+                                            usuario.rol === 'ADMIN' ? 'badge-danger' :
+                                            usuario.rol === 'PROFESOR' ? 'badge-success' :
+                                            'badge-warning'
+                                        }">${usuario.rol}</span>
+                                    </td>
+                                    <td>
+                                        ${usuario.activo !== false
+                                            ? '<span class="badge badge-success">Activo</span>'
+                                            : '<span class="badge badge-danger">Inactivo</span>'
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-danger" onclick="eliminarUsuario('${usuario.id}')">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error cargando usuarios:', error);
+            }
+        }
+
+        function abrirModalUsuario() {
+            document.getElementById('modalUsuario').style.display = 'flex';
+            document.getElementById('formUsuario').reset();
+        }
+
+        function cerrarModalUsuario() {
+            document.getElementById('modalUsuario').style.display = 'none';
+        }
+
+        document.getElementById('formUsuario').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const usuario = {
+                nombre: document.getElementById('usuarioNombre').value,
+                email: document.getElementById('usuarioEmail').value,
+                password: document.getElementById('usuarioPassword').value,
+                rol: document.getElementById('usuarioRol').value
+            };
+
+            try {
+                await api.registrar(usuario);
+                alert('✓ Usuario creado exitosamente');
+                cerrarModalUsuario();
+                cargarUsuarios();
+            } catch (error) {
+                console.error('Error creando usuario:', error);
+                alert('✗ Error al crear el usuario');
+            }
+        });
+
+        async function eliminarUsuario(usuarioId) {
+            if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
+
+            try {
+                await api.fetch(`/usuarios/${usuarioId}`, { method: 'DELETE' });
+                alert('✓ Usuario eliminado exitosamente');
+                cargarUsuarios();
+            } catch (error) {
+                console.error('Error eliminando usuario:', error);
+                alert('✗ Error al eliminar el usuario');
+            }
+        }
+
+        // ========== INSCRIPCIONES ==========
+        async function cargarInscripciones() {
+            try {
+                const inscripciones = await api.fetch('/inscripciones');
+                const inscripcionesList = document.getElementById('inscripcionesList');
+
+                if (inscripciones.length === 0) {
+                    inscripcionesList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📝</div>
+                            <p>No hay inscripciones registradas</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Obtener cursos y estudiantes
+                const [cursos, usuarios] = await Promise.all([
+                    api.getCursos(),
+                    api.fetch('/usuarios')
+                ]);
+
+                inscripcionesList.innerHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Estudiante</th>
+                                <th>Curso</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Estado Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${inscripciones.map(inscripcion => {
+                                const estudiante = usuarios.find(u => u.id === inscripcion.estudianteId);
+                                const curso = cursos.find(c => c.id === inscripcion.cursoId);
+                                return `
+                                    <tr>
+                                        <td>${estudiante ? estudiante.nombre : 'Desconocido'}</td>
+                                        <td>${curso ? curso.nombre : 'Desconocido'}</td>
+                                        <td>${new Date(inscripcion.fechaInscripcion).toLocaleDateString()}</td>
+                                        <td>
+                                            <span class="badge ${
+                                                inscripcion.estado === 'ACTIVA' ? 'badge-success' :
+                                                inscripcion.estado === 'PENDIENTE_PAGO' ? 'badge-warning' :
+                                                'badge-danger'
+                                            }">${inscripcion.estado}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge ${
+                                                inscripcion.estadoPago === 'PAGADO' ? 'badge-success' :
+                                                'badge-warning'
+                                            }">${inscripcion.estadoPago || 'PENDIENTE'}</span>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error cargando inscripciones:', error);
+            }
+        }
+
+        // Cerrar modales al hacer clic fuera
+        document.getElementById('modalCurso').addEventListener('click', (e) => {
+            if (e.target.id === 'modalCurso') cerrarModalCurso();
+        });
+
+        document.getElementById('modalUsuario').addEventListener('click', (e) => {
+            if (e.target.id === 'modalUsuario') cerrarModalUsuario();
+        });
+
+        // Cargar dashboard inicial
+        cargarDashboard();
+    </script>
+</body>
+</html>

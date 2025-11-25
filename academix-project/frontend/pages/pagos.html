@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Pagos - AcademiX</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .btn-back {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            background: #2980b9;
+        }
+
+        .btn-logout {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .page-header h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .summary-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .summary-card .value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .payments-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .payment-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .payment-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .payment-info p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .payment-amount {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .payment-body {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .payment-details {
+            display: grid;
+            gap: 10px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+        }
+
+        .payment-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.3s;
+            text-align: center;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-info {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #2980b9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty-state {
+            background: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            color: #666;
+        }
+
+        /* Modal de pago */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-confirm {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>💳 Mis Pagos</h1>
+        <div class="navbar-right">
+            <a href="estudiante-dashboard.html" class="btn-back">← Volver al Panel</a>
+            <button class="btn-logout" onclick="auth.logout()">Cerrar Sesión</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Gestión de Pagos</h2>
+            <p>Administra tus pagos y transacciones</p>
+        </div>
+
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>Total Pagado</h3>
+                <div class="value" id="totalPagado">$0</div>
+            </div>
+            <div class="summary-card">
+                <h3>Pagos Pendientes</h3>
+                <div class="value" id="pagosPendientes" style="color: #e74c3c;">0</div>
+            </div>
+            <div class="summary-card">
+                <h3>Pagos Completados</h3>
+                <div class="value" id="pagosCompletados" style="color: #27ae60;">0</div>
+            </div>
+        </div>
+
+        <div id="paymentsList" class="payments-list">
+            <div class="empty-state">
+                <div class="icon">💳</div>
+                <p>Cargando pagos...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Pago -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Realizar Pago</h3>
+                <p>Completa los datos para procesar tu pago</p>
+            </div>
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label>Método de Pago:</label>
+                    <select id="metodoPago" required>
+                        <option value="">Selecciona...</option>
+                        <option value="TARJETA_CREDITO">Tarjeta de Crédito</option>
+                        <option value="TARJETA_DEBITO">Tarjeta de Débito</option>
+                        <option value="TRANSFERENCIA">Transferencia Bancaria</option>
+                        <option value="PSE">PSE</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Número de Transacción:</label>
+                    <input type="text" id="transaccionId" placeholder="Ej: TRX123456789" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success btn-confirm">Confirmar Pago</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        if (!auth.requireRole('ESTUDIANTE')) {
+            // Redirige si no es estudiante
+        }
+
+        let pagoActual = null;
+
+        async function cargarPagos() {
+            try {
+                const estudianteId = auth.getUserId();
+                const pagos = await api.getPagosEstudiante(estudianteId);
+                
+                const paymentsList = document.getElementById('paymentsList');
+
+                if (pagos.length === 0) {
+                    paymentsList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">💰</div>
+                            <p>No tienes pagos registrados</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // FILTRAR: Solo mostrar el pago más reciente por inscripción
+                const pagosPorInscripcion = {};
+                pagos.forEach(pago => {
+                    const inscripcionId = pago.inscripcionId;
+                    if (!pagosPorInscripcion[inscripcionId] || 
+                        new Date(pago.fechaCreacion) > new Date(pagosPorInscripcion[inscripcionId].fechaCreacion)) {
+                        pagosPorInscripcion[inscripcionId] = pago;
+                    }
+                });
+
+                // Convertir a array solo con los pagos únicos
+                const pagosUnicos = Object.values(pagosPorInscripcion);
+
+                // Calcular estadísticas
+                let totalPagado = 0;
+                let pendientes = 0;
+                let completados = 0;
+
+                pagosUnicos.forEach(pago => {
+                    if (pago.estadoPago === 'COMPLETADO') {
+                        totalPagado += parseFloat(pago.monto);
+                        completados++;
+                    } else if (pago.estadoPago === 'PENDIENTE') {
+                        pendientes++;
+                    }
+                });
+
+                document.getElementById('totalPagado').textContent = '$' + totalPagado.toFixed(2);
+                document.getElementById('pagosPendientes').textContent = pendientes;
+                document.getElementById('pagosCompletados').textContent = completados;
+
+                // Primero obtener todas las inscripciones una sola vez
+                const inscripciones = await api.getMisInscripciones(estudianteId);
+                
+                // Luego mapear los pagos con sus cursos
+                const pagosConDetalles = await Promise.all(
+                    pagosUnicos.map(async (pago) => {
+                        try {
+                            const inscripcion = inscripciones.find(i => i.id === pago.inscripcionId);
+                            let curso = null;
+                            
+                            if (inscripcion) {
+                                curso = await api.getCurso(inscripcion.cursoId);
+                            }
+
+                            return { pago, curso, inscripcion };
+                        } catch (error) {
+                            console.error('Error cargando detalles:', error);
+                            return { pago, curso: null, inscripcion: null };
+                        }
+                    })
+                );
+
+                paymentsList.innerHTML = pagosConDetalles.map(({ pago, curso, inscripcion }) => `
+                    <div class="payment-card">
+                        <div class="payment-header">
+                            <div class="payment-info">
+                                <h3>${curso ? curso.nombre : 'Curso desconocido'}</h3>
+                                <p>${curso ? curso.codigo : ''}</p>
+                            </div>
+                            <div class="payment-amount">
+                                $${parseFloat(pago.monto).toFixed(2)}
+                            </div>
+                        </div>
+                        <div class="payment-body">
+                            <div class="payment-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">Estado:</span>
+                                    <span class="detail-value">${getEstadoBadge(pago.estadoPago)}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Fecha de Pago:</span>
+                                    <span class="detail-value">${pago.fechaPago ? new Date(pago.fechaPago).toLocaleDateString() : 'Pendiente'}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Método:</span>
+                                    <span class="detail-value">${pago.metodoPago || 'No especificado'}</span>
+                                </div>
+                                ${pago.transaccionId ? `
+                                    <div class="detail-row">
+                                        <span class="detail-label">Transacción:</span>
+                                        <span class="detail-value">${pago.transaccionId}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="payment-actions">
+                                ${pago.estadoPago === 'PENDIENTE' ? `
+                                    <button class="btn btn-success" onclick="abrirModalPago('${pago.id}', ${pago.monto})">
+                                        💳 Pagar Ahora
+                                    </button>
+                                ` : ''}
+                                <button class="btn btn-info" onclick="verComprobante('${pago.id}')">
+                                    📄 Ver Detalles
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error cargando pagos:', error);
+                document.getElementById('paymentsList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">❌</div>
+                        <p>Error al cargar los pagos</p>
+                    </div>
+                `;
+            }
+        }
+
+        function getEstadoBadge(estado) {
+            const badges = {
+                'COMPLETADO': '<span class="badge badge-success">✓ Completado</span>',
+                'PENDIENTE': '<span class="badge badge-warning">⏳ Pendiente</span>',
+                'FALLIDO': '<span class="badge badge-danger">✗ Fallido</span>'
+            };
+            return badges[estado] || '<span class="badge">' + estado + '</span>';
+        }
+
+        function abrirModalPago(pagoId, monto) {
+            pagoActual = pagoId;
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            pagoActual = null;
+            document.getElementById('paymentModal').style.display = 'none';
+            document.getElementById('paymentForm').reset();
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const metodoPago = document.getElementById('metodoPago').value;
+            const transaccionId = document.getElementById('transaccionId').value;
+
+            try {
+                await api.confirmarPago(pagoActual, { transaccionId, metodoPago });
+                alert('¡Pago procesado exitosamente!');
+                cerrarModal();
+                cargarPagos();
+            } catch (error) {
+                console.error('Error procesando pago:', error);
+                alert('Error al procesar el pago. Intenta de nuevo.');
+            }
+        });
+
+        function verComprobante(pagoId) {
+            alert('Funcionalidad en desarrollo: Ver comprobante del pago ' + pagoId);
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('paymentModal').addEventListener('click', (e) => {
+            if (e.target.id === 'paymentModal') {
+                cerrarModal();
+            }
+        });
+
+        cargarPagos();
+    </script>
+</body>
+</html>
